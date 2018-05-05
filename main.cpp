@@ -1,50 +1,22 @@
 #include <QCoreApplication>
-
-#include <QModbusTcpClient>
-#include <QModbusRtuSerialMaster>
-#include <QAbstractItemModel>
-#include <QBitArray>
-#include <QObject>
-#include <QSerialPort>
-#include <QStandardItemModel>
-#include <QtCore/QVariant>
-#include <QUrl>
-#include <QString>
-
 #include <stdio.h>
-
-
-QModbusDataUnit readRequest() {
-	const auto table = QModbusDataUnit::RegisterType::InputRegisters;
-	int startAddress = 5;
-	return QModbusDataUnit(table, startAddress, 0x10);
-}
-
+#include "modbus_logger.h"
 
 int main ( int argc, char *argv[] ) {
-	QCoreApplication a(argc, argv);
+	QCoreApplication	a( argc, argv );
+	ModBusLogger		mbl;
 
-	QModbusClient*		modbus;
+	modbusSerialCfg		cfgPort;
 
-	modbus = new QModbusRtuSerialMaster( nullptr );
+	cfgPort.portName			=	QString( "/dev/ttyUSB0" );
+	cfgPort.parity				=	QSerialPort::NoParity;
+	cfgPort.baudrate			=	QSerialPort::Baud115200;
+	cfgPort.dataSize			=	QSerialPort::Data8;
+	cfgPort.stopBit				=	QSerialPort::OneStop;
 
-	modbus->setConnectionParameter(QModbusDevice::SerialPortNameParameter,
-		"ttyUSB0" );
-	modbus->setConnectionParameter(QModbusDevice::SerialParityParameter,
-		QSerialPort::EvenParity);
-	modbus->setConnectionParameter(QModbusDevice::SerialBaudRateParameter,
-		QSerialPort::Baud9600);
-	modbus->setConnectionParameter(QModbusDevice::SerialDataBitsParameter,
-		QSerialPort::Data8);
-	modbus->setConnectionParameter(QModbusDevice::SerialStopBitsParameter,
-		QSerialPort::OneStop);
+	uint16_t		dataReturn[5];
 
-	if ( !modbus->connectDevice() ) {
-		while(1);
-	} else {
-		auto* reply = modbus->sendReadRequest(readRequest(), 0x10 );
-
-	}
+	mbl.readDataFromSerial( cfgPort, 0x01, 0x00, 5, dataReturn );
 
 	return a.exec();
 }
