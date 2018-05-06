@@ -2,23 +2,24 @@
 
 ModbusLogger::ModbusLogger() {
 	this->mbll								=	new ModBusLowLavel;
-	this->itemCfg							=	new ModbusLoggerItemCfg;
 
-	itemCfg->mb								=	mbll;
+	modbusSerialPacketCfg*					itemCfg;
+	itemCfg	=	new modbusSerialPacketCfg();
 
-	itemCfg->portCfg.portName				=	QString( "/dev/ttyUSB0" );
-	itemCfg->portCfg.parity					=	QSerialPort::NoParity;
-	itemCfg->portCfg.baudrate				=	QSerialPort::Baud115200;
-	itemCfg->portCfg.dataSize				=	QSerialPort::Data8;
-	itemCfg->portCfg.stopBit				=	QSerialPort::OneStop;
-	itemCfg->clientAddress					=	0x01;
-	itemCfg->startAddress					=	0x00;
-	itemCfg->countRegister					=	5;
-	itemCfg->period							=	1000;
+	itemCfg->p.portName				=	QString( "/dev/ttyUSB0" );
+	itemCfg->p.parity				=	QSerialPort::NoParity;
+	itemCfg->p.baudrate				=	QSerialPort::Baud115200;
+	itemCfg->p.dataSize				=	QSerialPort::Data8;
+	itemCfg->p.stopBit				=	QSerialPort::OneStop;
+	itemCfg->clientAddress			=	0x01;
+	itemCfg->startAddress			=	0x00;
+	itemCfg->countRegister			=	5;
 
-	ModbusLoggerItem*	item				=	new	ModbusLoggerItem( itemCfg );
+	ModbusLoggerItem*	item				=	new	ModbusLoggerItem( mbll, *itemCfg );
+	ModbusLoggerItem*	item1				=	new	ModbusLoggerItem( mbll, *itemCfg );
 
-	item->start();
+	item->start( 1000 );
+	item1->start( 500 );
 
 }
 

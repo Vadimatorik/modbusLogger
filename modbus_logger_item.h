@@ -8,7 +8,7 @@
  */
 struct ModbusLoggerItemCfg {
 	ModBusLowLavel*			mb;					/// Объект modbus-а.
-	modbusSerialCfg			portCfg;			/// Параметры подключения.
+	serialPortCfg			portCfg;			/// Параметры подключения.
 	int						clientAddress;		/// Адрес опрашиваемого устройства.
 	int						startAddress;		/// Адрес, с которого спрашиваем.
 	int						countRegister;		/// Количество регистров.
@@ -26,23 +26,22 @@ class ModbusLoggerItem : public QObject {
 	Q_OBJECT
 
 public:
-	ModbusLoggerItem( const ModbusLoggerItemCfg* const cfg );
+	ModbusLoggerItem( ModBusLowLavel* const mb, const modbusSerialPacketCfg packetCfg );
 
 public slots:
-	void			start			( void );
+	void			start			( uint32_t period );
+
+signals:
+	void			signalReadData	( const modbusSerialPacketCfg	packetCfg );
 
 private slots:
-	/*!
-	 * Слот срабатывания таймера (требуется новый запрос).
-	 */
+	/// Слот срабатывания таймера (требуется новый запрос).
 	void			timeout			( void );
 
 private:
-	const ModbusLoggerItemCfg* const cfg;
+	ModBusLowLavel*						const mb;
+	const modbusSerialPacketCfg			packetCfg;
 
 	/// Таймер для опроса с заданным периодом.
 	QTimer*				timer;
-
-	/// Хранилище входных данных.
-	uint16_t*			inputRegData;
 };

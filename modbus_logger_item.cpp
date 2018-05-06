@@ -1,31 +1,32 @@
 #include "modbus_logger_item.h"
 
-ModbusLoggerItem::ModbusLoggerItem ( const ModbusLoggerItemCfg* const cfg )
-	: QObject( nullptr ), cfg( cfg ) {
+ModbusLoggerItem::ModbusLoggerItem( ModBusLowLavel* const mb, const modbusSerialPacketCfg packetCfg )
+	: QObject( nullptr ), mb( mb ), packetCfg( packetCfg ) {
 	qRegisterMetaType< MODBUS_ANSWER_RESULT >();
-	qRegisterMetaType< modbusSerialCfg >();
+	qRegisterMetaType< serialPortCfg >();
 	qRegisterMetaType< QVector< uint16_t > >();
 
 	/// Настраиваем срабатывание таймера с заданным периодом.
 	this->timer	= new QTimer( this );
 	connect( this->timer, SIGNAL( timeout( void ) ), this, SLOT( timeout( void ) ) );
 
-	/// Выделяем память под хранилище.
-	this->inputRegData		=	new uint16_t[ cfg->countRegister ];
+	connect( this,
+			 SIGNAL( signalReadData( const modbusSerialPacketCfg ) ),
+			 this->mb,
+			 SLOT( slotReadData( const modbusSerialPacketCfg ) ) );
+
+
 }
 
-void ModbusLoggerItem::start ( void ) {
-	this->timer->start( this->cfg->period );
+void ModbusLoggerItem::start ( uint32_t period ) {
+	this->timer->start( period );
 }
 
 void ModbusLoggerItem::timeout ( void ) {
 	MODBUS_ANSWER_RESULT	r;
 
-	r	=	this->cfg->mb->readDataFromSerial(	this->cfg->portCfg,
-												this->cfg->clientAddress,
-												this->cfg->startAddress,
-												this->cfg->countRegister,
-												this->inputRegData	);
+	emit this->signalReadData( this->packetCfg );
+
 	if ( r == MODBUS_ANSWER_RESULT::OK ) {
 	} else {
 	}

@@ -9,7 +9,7 @@ enum class MODBUS_ANSWER_RESULT {
 	ERR_INTERFACE	=	3
 };
 
-struct modbusSerialCfg {
+struct serialPortCfg {
 	QString				portName;			/// "/dev/ttyUSB0"
 	int					parity;				/// QSerialPort::NoParity
 	int					baudrate;			/// QSerialPort::Baud115200
@@ -17,6 +17,14 @@ struct modbusSerialCfg {
 	int					stopBit;			/// QSerialPort::OneStop
 };
 
+struct modbusSerialPacketCfg {
+	serialPortCfg		p;
+	int					clientAddress;
+	int					startAddress;
+	int					countRegister;
+};
+
 Q_DECLARE_METATYPE( MODBUS_ANSWER_RESULT );
 Q_DECLARE_METATYPE( QVector< uint16_t > );
-Q_DECLARE_METATYPE( modbusSerialCfg );
+Q_DECLARE_METATYPE( serialPortCfg );
+Q_DECLARE_METATYPE( modbusSerialPacketCfg );

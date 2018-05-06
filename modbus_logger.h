@@ -1,7 +1,6 @@
 #pragma once
 
 #include "modbus_logger_item.h"
-#include <QThread>
 
 class ModbusLogger : public QObject {
 	Q_OBJECT
@@ -17,6 +16,6 @@ signals:
 private:
 	ModBusLowLavel*			mbll;
 	ModbusLoggerItemCfg*	itemCfg;
-	modbusSerialCfg*		portCfg;
+	serialPortCfg*			portCfg;
 	QThread					workerThread;
 };

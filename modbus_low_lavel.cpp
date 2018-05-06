@@ -1,91 +1,71 @@
 #include "modbus_low_lavel.h"
+#include <QCoreApplication>
 
-#include <QModbusDataUnit>
-#include <QAbstractItemModel>
-#include <QBitArray>
-#include <QObject>
-#include <QSerialPort>
-#include <QUrl>
-#include <QString>
-#include <QModbusTcpClient>
-#include <QModbusRtuSerialMaster>
-#include <QStandardItemModel>
-#include <QUrl>
-#include <QModbusDataUnit>
-#include <QThread>
 
 ModBusLowLavel::ModBusLowLavel ( QObject* parent ) : QObject( parent ) {
 	qRegisterMetaType< MODBUS_ANSWER_RESULT >();
-	qRegisterMetaType< modbusSerialCfg >();
-	qRegisterMetaType< QVector< uint16_t > >();
+	qRegisterMetaType< QVector< uint16_t > >();	
+	qRegisterMetaType< modbusSerialPacketCfg >();
 
-	this->mbt			=	new ModbusThread();
-
-	/// Отправка в поток задания запроса регистров.
-	connect(	this,
-				&ModBusLowLavel::signalInitRead,
-				this->mbt,
-				&ModbusThread::slotInitRead	);
-
-	/// Прием ответа из потока.
-	connect( this->mbt,
-			 SIGNAL( signalFinishedRead( MODBUS_ANSWER_RESULT, QVector< uint16_t > ) ),
-			 this,
-			 SLOT( slotFinishedRead( MODBUS_ANSWER_RESULT, QVector< uint16_t > ) ) );
-
-
-	/*!
-	 * Эксклюзивный доступ к modbus.
-	 */
-	this->m			=	new	QMutex();
-
-	/*!
-	 * Выдается по окончании приема.
-	 */
-	this->s			=	new QSemaphore();
-
-	qRegisterMetaType< MODBUS_ANSWER_RESULT >();
+	this->modbus			=	new QModbusRtuSerialMaster( nullptr );
 }
 
-MODBUS_ANSWER_RESULT ModBusLowLavel::readDataFromSerial (	modbusSerialCfg			portCfg,
-															int						clientAddress,
-															int						startAddress,
-															int						countRegister,
-															uint16_t*				returnData	) {
-	/*!
-	 * Забираем на время запроса и ответа.
-	 */
-	this->m->lock();
-
-	/// Куда класть по прибытии.
-	this->returnData			=	returnData;
-
-	emit this->signalInitRead(	portCfg.portName,
-								portCfg.parity,
-								portCfg.baudrate,
-								portCfg.dataSize,
-								portCfg.stopBit,
-								clientAddress,
-								startAddress,
-								countRegister );
-
-	/// Ждем окончания передачи
-	/// (прерывание может произойти по таймауту внутри modbus).
-	//this->s->tryAcquire( 1, -1 );
-
-	/// Освобождаем ресурс.
-	this->m->unlock();
-
-	return this->resultFromIsr;
+void ModBusLowLavel::waitFreeResurse	( void ) {
+	/// Ждем пока отработает предыдущее обращение.
+	while( this->fBusy ) {
+		QCoreApplication::processEvents();
+	}
+	this->fBusy		= true;
 }
 
-void ModBusLowLavel::slotFinishedRead (	MODBUS_ANSWER_RESULT		result,
-										QVector< uint16_t >		reg	) {
-	/// забираем результаты.
-	this->resultFromIsr	=	result;
-	for ( int i = 0; i < reg.count(); i++ )
-		returnData[ i ]	=	reg.value( i );
+void ModBusLowLavel::slotReadData (	const modbusSerialPacketCfg	packetCfg	) {
+	this->waitFreeResurse();
 
-	/// Сообщаем что результат здесь.
-	this->s->release( 1 );
+	/// Конфигурируем порт согласно параметрам.
+	this->modbus->setConnectionParameter(	QModbusDevice::SerialPortNameParameter,
+											packetCfg.p.portName	);
+
+	this->modbus->setConnectionParameter(	QModbusDevice::SerialParityParameter,
+											packetCfg.p.parity	);
+
+	this->modbus->setConnectionParameter(	QModbusDevice::SerialBaudRateParameter,
+											packetCfg.p.baudrate	);
+
+	this->modbus->setConnectionParameter(	QModbusDevice::SerialDataBitsParameter,
+											packetCfg.p.dataSize	);
+
+	this->modbus->setConnectionParameter(	QModbusDevice::SerialStopBitsParameter,
+											packetCfg.p.stopBit	);
+
+	/// Пытаемся установить контакт.
+	if ( this->modbus->connectDevice() != true ) {		
+		this->modbus->disconnectDevice();
+		this->fBusy		= false;
+		return;
+	}
+
+	/// Описываем тип транзакции ( у нас всегда считывание ).
+	QModbusDataUnit		dataUnit( QModbusDataUnit::RegisterType::InputRegisters, packetCfg.startAddress, packetCfg.countRegister );
+
+	/// Ставим задачу отправить запрос и получить ответ.
+	if ( auto *reply = this->modbus->sendReadRequest( dataUnit, packetCfg.clientAddress ) ) {
+		/// Дальнейшие действия в прерывании по окончании прием-переадчи.
+		connect( reply, &QModbusReply::finished, this, &ModBusLowLavel::slotFinishedRead );
+	} else {
+		return;
+	}
+}
+
+void ModBusLowLavel::slotFinishedRead (	void ) {
+	/// Забираем результат операции.
+	auto reply = qobject_cast< QModbusReply* >( sender() );
+
+	/// Все прошло удачно?
+	if ( reply->error() == QModbusDevice::NoError ) {
+		const QModbusDataUnit answer = reply->result();
+	} else {
+	}
+
+	reply->deleteLater();
+	this->fBusy = false;
 }
