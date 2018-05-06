@@ -21,27 +21,53 @@ void ModBusLowLavel::waitFreeResurse	( void ) {
 void ModBusLowLavel::slotReadData (	const modbusSerialPacketCfg	packetCfg	) {
 	this->waitFreeResurse();
 
-	/// Конфигурируем порт согласно параметрам.
-	this->modbus->setConnectionParameter(	QModbusDevice::SerialPortNameParameter,
-											packetCfg.p.portName	);
+	bool rReconnect = false;
+	/// Если порт уже был настроен, смотрим параметры предыдущего подключения.
+	/// Если они совпадают - ничего переподключать не будем.
+	if ( this->modbus->state() == QModbusDevice::ConnectedState ) {
+		if ( this->modbus->connectionParameter( QModbusDevice::SerialPortNameParameter ) != packetCfg.p.portName )
+			rReconnect = true;
 
-	this->modbus->setConnectionParameter(	QModbusDevice::SerialParityParameter,
-											packetCfg.p.parity	);
+		if ( this->modbus->connectionParameter( QModbusDevice::SerialParityParameter ) != packetCfg.p.parity )
+			rReconnect = true;
 
-	this->modbus->setConnectionParameter(	QModbusDevice::SerialBaudRateParameter,
-											packetCfg.p.baudrate	);
+		if ( this->modbus->connectionParameter( QModbusDevice::SerialBaudRateParameter ) != packetCfg.p.baudrate )
+			rReconnect = true;
 
-	this->modbus->setConnectionParameter(	QModbusDevice::SerialDataBitsParameter,
-											packetCfg.p.dataSize	);
+		if ( this->modbus->connectionParameter( QModbusDevice::SerialDataBitsParameter ) != packetCfg.p.dataSize )
+			rReconnect = true;
 
-	this->modbus->setConnectionParameter(	QModbusDevice::SerialStopBitsParameter,
-											packetCfg.p.stopBit	);
+		if ( this->modbus->connectionParameter( QModbusDevice::SerialStopBitsParameter ) != packetCfg.p.stopBit )
+			rReconnect = true;
 
-	/// Пытаемся установить контакт.
-	if ( this->modbus->connectDevice() != true ) {		
-		this->modbus->disconnectDevice();
-		this->fBusy		= false;
-		return;
+	} else {
+		rReconnect = true;	/// Порт не был подключен, инициализировать надо.
+	}
+
+	/// Если стараяконфигурация не подходит или ее нет вообще.
+	if ( rReconnect == true ) {
+		/// Конфигурируем порт согласно параметрам.
+		this->modbus->setConnectionParameter(	QModbusDevice::SerialPortNameParameter,
+												packetCfg.p.portName	);
+
+		this->modbus->setConnectionParameter(	QModbusDevice::SerialParityParameter,
+												packetCfg.p.parity	);
+
+		this->modbus->setConnectionParameter(	QModbusDevice::SerialBaudRateParameter,
+												packetCfg.p.baudrate	);
+
+		this->modbus->setConnectionParameter(	QModbusDevice::SerialDataBitsParameter,
+												packetCfg.p.dataSize	);
+
+		this->modbus->setConnectionParameter(	QModbusDevice::SerialStopBitsParameter,
+												packetCfg.p.stopBit	);
+
+		/// Пытаемся установить контакт.
+		if ( this->modbus->connectDevice() != true ) {
+			this->modbus->disconnectDevice();
+			this->fBusy		= false;
+			return;
+		}
 	}
 
 	/// Описываем тип транзакции ( у нас всегда считывание ).
