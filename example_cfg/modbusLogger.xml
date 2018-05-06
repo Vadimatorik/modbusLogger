@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="utf-8"?>
+<modbus_cfg>
+	<item>
+		<state>1</state>
+		<name_device>Серверная</name_device>
+		<type>COM</type>
+		<port_name>/dev/ttyUSB0</port_name>
+		<parity>0</parity>
+		<baudrate>115200</baudrate>
+		<data_size>8</data_size>
+		<stop_bits>1</stop_bits>
+		<client_address>1</client_address>
+		<period>1000</period>
+		<zone address="1" size="3"></zone>
+		<zone address="2" size="3"></zone>
+	</item>
+
+	<item>
+		<state>1</state>
+		<name_device>Уборная</name_device>
+		<type>COM</type>
+		<port_name>/dev/ttyUSB0</port_name>
+		<parity>0</parity>
+		<baudrate>115200</baudrate>
+		<data_size>8</data_size>
+		<stop_bits>1</stop_bits>
+		<client_address>1</client_address>
+		<period>1000</period>
+		<zone address="4" size="1"></zone>
+	</item>
+</modbus_cfg>

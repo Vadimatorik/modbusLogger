@@ -1,7 +1,18 @@
 #include "modbus_logger.h"
 
-ModbusLogger::ModbusLogger() {
+ModbusLogger::ModbusLogger( char* fileCfgPath ) {
+	/// Путь до файла с конфигурацией.
+	this->fileCfg		=	QString( fileCfgPath );
+
+	/// Объект сканирования XML.
+	this->xmlSR			=	new QXmlStreamReader();
+
+	/// ModBus протокол.
 	this->mbll								=	new ModBusLowLavel;
+
+	/// Получаем список устройств-адресов.
+	QVector< ModbusLoggerItem* >		items;
+	this->readFileCfg( &items );
 
 	modbusSerialPacketCfg*					itemCfg;
 	itemCfg	=	new modbusSerialPacketCfg();
@@ -20,8 +31,9 @@ ModbusLogger::ModbusLogger() {
 
 	item->start( 1000 );
 	item1->start( 500 );
-
 }
+
+
 
 void ModbusLogger::start ( void ) {
 

@@ -17,7 +17,8 @@ DEFINES += QT_DEPRECATED_WARNINGS
 SOURCES += main.cpp \
     modbus_low_lavel.cpp \
     modbus_logger_item.cpp \
-    modbus_logger.cpp
+    modbus_logger.cpp \
+    modbus_logger_xml.cpp
 
 HEADERS += \
     modbus_logger_item.h \

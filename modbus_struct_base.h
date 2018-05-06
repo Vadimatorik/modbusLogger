@@ -18,6 +18,8 @@ struct serialPortCfg {
 };
 
 struct modbusSerialPacketCfg {
+	QString				deviceName;
+	int					period;
 	serialPortCfg		p;
 	int					clientAddress;
 	int					startAddress;
