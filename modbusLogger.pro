@@ -15,7 +15,14 @@ DEFINES += QT_DEPRECATED_WARNINGS
 #DEFINES += QT_DISABLE_DEPRECATED_BEFORE=0x060000    # disables all the APIs deprecated before Qt 6.0.0
 
 SOURCES += main.cpp \
-    modbus_logger.cpp
+    modbus_low_lavel.cpp \
+    modbus_logger_item.cpp \
+    modbus_logger.cpp \
+    modbus_serial_thread.cpp
 
 HEADERS += \
-    modbus_logger.h
+    modbus_logger_item.h \
+    modbus_low_lavel.h \
+    modbus_logger.h \
+    modbus_serial_thread.h \
+    modbus_struct_base.h
