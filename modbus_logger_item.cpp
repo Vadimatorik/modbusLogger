@@ -18,8 +18,8 @@ ModbusLoggerItem::ModbusLoggerItem( ModBusLowLavel* const mb, const modbusSerial
 
 }
 
-void ModbusLoggerItem::start ( uint32_t period ) {
-	this->timer->start( period );
+void ModbusLoggerItem::start ( void ) {
+	this->timer->start( this->packetCfg.period );
 }
 
 void ModbusLoggerItem::timeout ( void ) {

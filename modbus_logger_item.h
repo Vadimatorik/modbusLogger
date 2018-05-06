@@ -29,7 +29,7 @@ public:
 	ModbusLoggerItem( ModBusLowLavel* const mb, const modbusSerialPacketCfg packetCfg );
 
 public slots:
-	void			start			( uint32_t period );
+	void			start			();
 
 signals:
 	void			signalReadData	( const modbusSerialPacketCfg	packetCfg );

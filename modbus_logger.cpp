@@ -14,23 +14,9 @@ ModbusLogger::ModbusLogger( char* fileCfgPath ) {
 	QVector< ModbusLoggerItem* >		items;
 	this->readFileCfg( &items );
 
-	modbusSerialPacketCfg*					itemCfg;
-	itemCfg	=	new modbusSerialPacketCfg();
-
-	itemCfg->p.portName				=	QString( "/dev/ttyUSB0" );
-	itemCfg->p.parity				=	QSerialPort::NoParity;
-	itemCfg->p.baudrate				=	QSerialPort::Baud115200;
-	itemCfg->p.dataSize				=	QSerialPort::Data8;
-	itemCfg->p.stopBit				=	QSerialPort::OneStop;
-	itemCfg->clientAddress			=	0x01;
-	itemCfg->startAddress			=	0x00;
-	itemCfg->countRegister			=	5;
-
-	ModbusLoggerItem*	item				=	new	ModbusLoggerItem( mbll, *itemCfg );
-	ModbusLoggerItem*	item1				=	new	ModbusLoggerItem( mbll, *itemCfg );
-
-	item->start( 1000 );
-	item1->start( 500 );
+	/// Запускаем все объекты опроса.
+	for ( int l = 0; l < items.count(); l++ )
+		items.at( l )->start();
 }
 
 
