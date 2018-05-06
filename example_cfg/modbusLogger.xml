@@ -11,8 +11,10 @@
 		<stop_bits>1</stop_bits>
 		<client_address>1</client_address>
 		<period>1000</period>
-		<zone address="1" size="3"></zone>
-		<zone address="2" size="3"></zone>
+		<zone address="0" size="2"></zone>
+		<zone address="1" size="2"></zone>
+		<zone address="2" size="2"></zone>
+		<zone address="3" size="2"></zone>
 	</item>
 
 	<item>
@@ -26,6 +28,9 @@
 		<stop_bits>1</stop_bits>
 		<client_address>1</client_address>
 		<period>300</period>
-		<zone address="4" size="1"></zone>
+		<zone address="0" size="2"></zone>
+		<zone address="1" size="2"></zone>
+		<zone address="2" size="2"></zone>
+		<zone address="3" size="2"></zone>
 	</item>
 </modbus_cfg>

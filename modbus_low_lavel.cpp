@@ -82,6 +82,9 @@ void ModBusLowLavel::slotReadData (	const modbusSerialPacketCfg	packetCfg	) {
 	}
 }
 
+
+#include <iostream>
+
 void ModBusLowLavel::slotFinishedRead (	void ) {
 	/// Забираем результат операции.
 	auto reply = qobject_cast< QModbusReply* >( sender() );
@@ -89,7 +92,10 @@ void ModBusLowLavel::slotFinishedRead (	void ) {
 	/// Все прошло удачно?
 	if ( reply->error() == QModbusDevice::NoError ) {
 		const QModbusDataUnit answer = reply->result();
+		std::cout << answer.value( 0 ) << '\t' << answer.value( 1 ) << std::endl;
+
 	} else {
+		std::cout << "Error!";
 	}
 
 	reply->deleteLater();
