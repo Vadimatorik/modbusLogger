@@ -24,6 +24,7 @@ struct modbusSerialPacketCfg {
 	int					clientAddress;
 	int					startAddress;
 	int					countRegister;
+	quint16*			returnData;
 };
 
 Q_DECLARE_METATYPE( MODBUS_ANSWER_RESULT );
