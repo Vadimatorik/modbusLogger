@@ -29,18 +29,18 @@ public:
 	ModbusLoggerItem( ModBusLowLavel* const mb, const modbusSerialPacketCfg packetCfg );
 
 public slots:
-	void			start			();
+	void			start			( void );
 
 signals:
-	void			signalReadData	( const modbusSerialPacketCfg	packetCfg );
+	void			signalReadData	( modbusSerialPacketCfg*	packetCfg );
 
 private slots:
 	/// Слот срабатывания таймера (требуется новый запрос).
 	void			timeout			( void );
 
 private:
-	ModBusLowLavel*						const mb;
-	const modbusSerialPacketCfg			packetCfg;
+	ModBusLowLavel*					const mb;
+	modbusSerialPacketCfg			packetCfg;
 
 	/// Таймер для опроса с заданным периодом.
 	QTimer*				timer;

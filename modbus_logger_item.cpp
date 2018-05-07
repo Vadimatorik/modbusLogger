@@ -1,21 +1,24 @@
 #include "modbus_logger_item.h"
 
-ModbusLoggerItem::ModbusLoggerItem( ModBusLowLavel* const mb, const modbusSerialPacketCfg packetCfg )
+ModbusLoggerItem::ModbusLoggerItem( ModBusLowLavel* const mb, modbusSerialPacketCfg packetCfg )
 	: QObject( nullptr ), mb( mb ), packetCfg( packetCfg ) {
 	qRegisterMetaType< MODBUS_ANSWER_RESULT >();
 	qRegisterMetaType< serialPortCfg >();
+	qRegisterMetaType< modbusSerialPacketCfg* >();
 	qRegisterMetaType< QVector< uint16_t > >();
+
 
 	/// Настраиваем срабатывание таймера с заданным периодом.
 	this->timer	= new QTimer( this );
 	connect( this->timer, SIGNAL( timeout( void ) ), this, SLOT( timeout( void ) ) );
 
 	connect( this,
-			 SIGNAL( signalReadData( const modbusSerialPacketCfg ) ),
+			 SIGNAL( signalReadData( modbusSerialPacketCfg* ) ),
 			 this->mb,
-			 SLOT( slotReadData( const modbusSerialPacketCfg ) ) );
+			 SLOT( slotReadData( modbusSerialPacketCfg* ) ) );
 
-
+	/// Сюда будут класться данные.
+	this->packetCfg.returnData	=	new quint16[ this->packetCfg.countRegister ];
 }
 
 void ModbusLoggerItem::start ( void ) {
@@ -23,11 +26,5 @@ void ModbusLoggerItem::start ( void ) {
 }
 
 void ModbusLoggerItem::timeout ( void ) {
-	MODBUS_ANSWER_RESULT	r;
-
-	emit this->signalReadData( this->packetCfg );
-
-	if ( r == MODBUS_ANSWER_RESULT::OK ) {
-	} else {
-	}
+	emit this->signalReadData( &this->packetCfg );
 }

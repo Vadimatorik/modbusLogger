@@ -31,3 +31,4 @@ Q_DECLARE_METATYPE( MODBUS_ANSWER_RESULT );
 Q_DECLARE_METATYPE( QVector< uint16_t > );
 Q_DECLARE_METATYPE( serialPortCfg );
 Q_DECLARE_METATYPE( modbusSerialPacketCfg );
+Q_DECLARE_METATYPE( modbusSerialPacketCfg* );

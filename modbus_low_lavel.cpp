@@ -17,7 +17,7 @@ ModBusLowLavel::ModBusLowLavel ( QObject* parent ) : QObject( parent ) {
 	this->modbus			=	new QModbusRtuSerialMaster( nullptr );
 }
 
-void ModBusLowLavel::waitFreeResurse	( void ) {
+void ModBusLowLavel::waitFreeResurse ( void ) {
 	/// Ждем пока отработает предыдущее обращение.
 	while( this->fBusy ) {
 		QCoreApplication::processEvents();
@@ -91,13 +91,13 @@ void ModBusLowLavel::slotReadData (	modbusSerialPacketCfg*	packetCfg	) {
 	/// Если не удалось инициализировать порт.
 	if ( this->reinitPort( packetCfg ) != true ) {
 		/// Выводим информацию о порте, который не удалось инициализировать.
-		qDebug() << "Port was not reinit! Detail:" << endl;
-		qDebug() << '\t' <<"Date:\t"			<< QDate::currentDate()	<< endl;
-		qDebug() << '\t' <<"Baudrate:\t"		<< packetCfg->p.baudrate	<< endl;
-		qDebug() << '\t' <<"DataSize:\t"		<< packetCfg->p.dataSize	<< endl;
-		qDebug() << '\t' <<"Parity:\t"			<< packetCfg->p.parity	<< endl;
-		qDebug() << '\t' <<"Port name:\t"		<< packetCfg->p.portName	<< endl;
-		qDebug() << '\t' <<"Stop bits:\t"		<< packetCfg->p.stopBit	<< endl;
+		qDebug() << "Port was not reinit! Detail:";
+		qDebug() << '\t' <<"Date:\t\t"			<< QDate::currentDate();
+		qDebug() << '\t' <<"Baudrate:\t"		<< packetCfg->p.baudrate;
+		qDebug() << '\t' <<"DataSize:\t"		<< packetCfg->p.dataSize;
+		qDebug() << '\t' <<"Parity:\t"			<< packetCfg->p.parity;
+		qDebug() << '\t' <<"Port name:\t"		<< packetCfg->p.portName;
+		qDebug() << '\t' <<"Stop bits:\t"		<< packetCfg->p.stopBit;
 		qDebug() << endl;
 
 		/// Ресурс освобожден.
@@ -120,11 +120,11 @@ void ModBusLowLavel::slotReadData (	modbusSerialPacketCfg*	packetCfg	) {
 		connect( reply, &QModbusReply::finished, this, &ModBusLowLavel::slotFinishedRead );
 	} else {							/// Не удалось инициировать запрос.
 		/// Выводим информацию о запросе, который упал.
-		qDebug() << "Read request was not start! Detail:"					<< endl;
-		qDebug() << '\t' <<"Date:\t"			<< QDate::currentDate()		<< endl;
-		qDebug() << '\t' <<"Start address:\t"	<< packetCfg->startAddress	<< endl;
-		qDebug() << '\t' <<"Count register:\t"	<< packetCfg->countRegister	<< endl;
-		qDebug() << '\t' <<"Client address:\t"	<< packetCfg->clientAddress	<< endl;
+		qDebug() << "Read request was not start! Detail:";
+		qDebug() << '\t' <<"Date:\t\t"			<< QDate::currentDate();
+		qDebug() << '\t' <<"Start address:\t"	<< packetCfg->startAddress;
+		qDebug() << '\t' <<"Count register:\t"	<< packetCfg->countRegister;
+		qDebug() << '\t' <<"Client address:\t"	<< packetCfg->clientAddress;
 		qDebug() << endl;
 
 		/// Ресурс освобожден.
@@ -146,13 +146,13 @@ void ModBusLowLavel::slotFinishedRead (	void ) {
 
 	} else {
 		/// Сообщаем все данные о провалившейся транзакции.
-		qDebug() << "Error read! Detail:" << endl;
-		qDebug() << '\t' <<"Date:\t\t"				<< QDate::currentDate()				<< endl;
-		qDebug() << '\t' <<"Device:\t\t"			<< this->actualCfg->deviceName		<< endl;
-		qDebug() << '\t' <<"Address:\t\t"			<< this->actualCfg->startAddress	<< endl;
-		qDebug() << '\t' <<"Count register:\t"		<< this->actualCfg->countRegister	<< endl;
-		qDebug() << '\t' <<"Client address:\t"		<< this->actualCfg->clientAddress	<< endl;
-		qDebug() << '\t' <<"Port name:\t\t"			<< this->actualCfg->p.portName		<< endl;
+		qDebug() << "Error read! Detail:";
+		qDebug() << '\t' <<"Date:\t\t\t"			<< QDate::currentDate();
+		qDebug() << '\t' <<"Device:\t\t"			<< this->actualCfg->deviceName;
+		qDebug() << '\t' <<"Address:\t\t"			<< this->actualCfg->startAddress;
+		qDebug() << '\t' <<"Count register:\t"		<< this->actualCfg->countRegister;
+		qDebug() << '\t' <<"Client address:\t"		<< this->actualCfg->clientAddress;
+		qDebug() << '\t' <<"Port name:\t\t"			<< this->actualCfg->p.portName;
 		qDebug() << endl;
 	}
 
