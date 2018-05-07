@@ -62,6 +62,7 @@ void ModBusLowLavel::slotReadData (	const modbusSerialPacketCfg	packetCfg	) {
 		this->modbus->setConnectionParameter(	QModbusDevice::SerialStopBitsParameter,
 												packetCfg.p.stopBit	);
 
+		this->modbus->setTimeout( 100 );
 		/// Пытаемся установить контакт.
 		if ( this->modbus->connectDevice() != true ) {
 			this->modbus->disconnectDevice();
