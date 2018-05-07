@@ -23,6 +23,7 @@ bool ModBusLowLavel::checkModbusParam ( const modbusSerialPacketCfg& packetCfg )
 	/// Флаг надобности инициализации объекта modbus.
 	bool r	=	false;
 
+	bool rReconnect = false;
 	/// Если порт уже был настроен, смотрим параметры предыдущего подключения.
 	/// Если они совпадают - ничего повторно настраивать не будем.
 	if ( this->modbus->state() == QModbusDevice::ConnectedState ) {
