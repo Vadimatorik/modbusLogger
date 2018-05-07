@@ -2,6 +2,7 @@
 
 #include "modbus_logger_item.h"
 
+#include <QtGlobal>
 #include <QXmlStreamReader>
 #include <QFile>
 #include <QString>
