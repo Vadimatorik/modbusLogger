@@ -25,6 +25,7 @@ private:
 	int		readBlockXML		( QVector< ModbusLoggerItem* >* obj );
 	int		readFileCfg			( QVector< ModbusLoggerItem* >* obj );
 
+	QVector< ModbusLoggerItem* >		items;
 	ModBusLowLavel*			mbll;
 	ModbusLoggerItemCfg*	itemCfg;
 	serialPortCfg*			portCfg;

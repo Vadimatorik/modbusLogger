@@ -29,9 +29,17 @@ public:
 	ModbusLoggerItem( ModBusLowLavel* const mb, const modbusSerialPacketCfg packetCfg );
 
 public slots:
+	/*!
+	 * Запускает таймер ожидания инициации запроса.
+	 */
 	void			start			( void );
 
 signals:
+	/*!
+	 * Инициирует запрос данных регистров.
+	 * Структура packetCfg не удаляется на протяжении выполнении программы
+	 * (обязательное условие слота).
+	 */
 	void			signalReadData	( modbusSerialPacketCfg*	packetCfg );
 
 private slots:

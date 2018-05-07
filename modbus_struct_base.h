@@ -9,6 +9,10 @@ enum class MODBUS_ANSWER_RESULT {
 	ERR_INTERFACE	=	3
 };
 
+/*!
+ * Структура конфигурации последовательно
+ * порта для modbus.
+ */
 struct serialPortCfg {
 	QString				portName;			/// "/dev/ttyUSB0"
 	int					parity;				/// QSerialPort::NoParity
@@ -17,14 +21,18 @@ struct serialPortCfg {
 	int					stopBit;			/// QSerialPort::OneStop
 };
 
+/*!
+ * Параметры пакета, запрашиваемые по
+ * последовательному modbus.
+ */
 struct modbusSerialPacketCfg {
 	QString				deviceName;
 	int					period;
-	serialPortCfg		p;
+	serialPortCfg		p;					/// Параметры конфигурации последовательного порта.
 	int					clientAddress;
 	int					startAddress;
 	int					countRegister;
-	quint16*			returnData;
+	quint16*			returnData;			/// Приходящие данные кладутся сюда.
 };
 
 Q_DECLARE_METATYPE( MODBUS_ANSWER_RESULT );

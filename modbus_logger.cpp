@@ -11,16 +11,13 @@ ModbusLogger::ModbusLogger( char* fileCfgPath ) {
 	this->mbll								=	new ModBusLowLavel;
 
 	/// Получаем список устройств-адресов.
-	QVector< ModbusLoggerItem* >		items;
-	this->readFileCfg( &items );
-
-	/// Запускаем все объекты опроса.
-	for ( int l = 0; l < items.count(); l++ )
-		items.at( l )->start();
+	this->readFileCfg( &this->items );
 }
 
 
 
 void ModbusLogger::start ( void ) {
-
+	/// Запускаем все объекты опроса.
+	for ( int l = 0; l < items.count(); l++ )
+		items.at( l )->start();
 }
